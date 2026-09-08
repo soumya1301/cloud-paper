@@ -1,0 +1,88 @@
+# Configuration for Research Paper Reproduction:
+# "A Machine Learning Technique for Optimizing Virtual Machine Placement in Data-Centres"
+# (Alelyani, Datta, Hassan, Journal of Cloud Computing, 2026)
+
+random_seed: 42
+
+dataset:
+  raw_dir: "data/raw"
+  processed_dir: "data/processed"
+  observation_window_minutes: 5
+  num_features: 16
+  train_split: 0.70
+  val_split: 0.10
+  test_split: 0.20
+  ml_dataset_vms: 2293
+  scheduling_vms: 7644
+  scheduling_pms: 798
+
+ml:
+  kmeans:
+    n_clusters: 3
+    max_iter: 300
+    random_state: 42
+    init: "k-means++"
+  autoencoder:
+    input_dim: 16
+    hidden_dim1: 12
+    latent_dim: 5
+    hidden_dim2: 12
+    output_dim: 16
+    learning_rate: 0.001
+    epochs: 500
+    batch_size: 64
+    weight_decay: 0.00001
+  svm:
+    kernel: "rbf"
+    cv_folds: 5
+    c_range: [0.1, 1.0, 10.0, 100.0]
+    gamma_range: ["scale", "auto", 0.01, 0.1, 1.0]
+
+simulation:
+  num_pms: 798
+  network_bandwidth_gbps: 4.0 # 4 Gbps = 0.5 GB/s (500 MB/s)
+  max_cpu_intensive_ratio: 0.25 # 25% max CPU-intensive (Cluster 2) VMs per PM
+  upper_threshold: 0.75 # 75% upper utilization threshold
+  lower_threshold: 0.35 # 35% lower utilization threshold
+  pm_server_model: "HP_G5" # Default HP ProLiant G5 as used in paper
+  sleep_power_w: 10.0 # 10 W sleep mode power
+  simulation_duration_minutes: 60.0
+  time_step_seconds: 60.0
+  dev_mode: false
+  dev_num_pms: 100
+  dev_num_vms: 1000
+
+# SPECpower benchmark profiles (Watts consumed at given CPU utilization %)
+specpower:
+  HP_G5:
+    sleep: 10.0
+    0: 93.7
+    10: 97.0
+    20: 101.0
+    30: 105.0
+    40: 110.0
+    50: 116.0
+    60: 121.0
+    70: 125.0
+    80: 129.0
+    90: 133.0
+    100: 135.0
+  HP_G4:
+    sleep: 10.0
+    0: 86.0
+    10: 89.4
+    20: 92.6
+    30: 96.0
+    40: 99.5
+    50: 102.0
+    60: 106.0
+    70: 108.0
+    80: 112.0
+    90: 114.0
+    100: 117.0
+
+output:
+  figures_dir: "results/figures"
+  tables_dir: "results/tables"
+  logs_dir: "results/logs"
+  models_dir: "models"
